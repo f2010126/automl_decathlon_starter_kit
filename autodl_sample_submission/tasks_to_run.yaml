@@ -1,5 +1,5 @@
 tasks: 
-    #- navierstokes # Space time dim = 3
+    - navierstokes # Space time dim = 3
     #- spherical # Space time dim = 2
     #- ninapro # Space time dim = 2
     #- fsd50k
