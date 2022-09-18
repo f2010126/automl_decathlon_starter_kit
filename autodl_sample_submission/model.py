@@ -23,9 +23,8 @@ class TorchModel(nn.Module):
     self.conv = torch.nn.Sequential()
     cnn_ch = 16
     if input_shape[1] == 1: # if num_channels = 1
-      print(f'1 SHAPE {input_shape[1]}')
       self.conv.add_module('cnn1', nn.Conv3d(input_shape[0], cnn_ch, (1,3,3)))
-    else:      
+    else:
       self.conv.add_module('cnn1', nn.Conv3d(input_shape[0], cnn_ch, 3))
     self.conv.add_module('pool1', nn.MaxPool3d(2,2))
     i = 2
@@ -43,8 +42,6 @@ class TorchModel(nn.Module):
     self.fc = nn.Linear(fc_size, output_dim)
 
   def forward_cnn(self, x):
-    print(f'Shape of Forward {x.shape}')
-    # x = x.view(x.size(0), -1)
     x = self.conv(x)
     return x
 
@@ -96,7 +93,7 @@ class Model:
 
         self.input_shape = (sequence_size, channel, row_count, col_count)
         print("\n\nINPUT SHAPE = ", self.input_shape)
-        print("\n\nOUTPUT DIM = ", self.output_dim)
+        print("\n\nOUTPUT DIM AKA # of Classes = ", self.output_dim)
         # getting an object for the PyTorch Model class for Model Class
         # use CUDA if available
         # TODO: ADD THE MODEL HERE
