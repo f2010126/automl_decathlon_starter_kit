@@ -16,10 +16,10 @@ np.random.seed(42)
 torch.manual_seed(1)
 
 # PyTorch Model class
-class TorchModel(nn.Module):
+class TorchModel3D(nn.Module):
   def __init__(self, input_shape, output_dim):
     ''' 3D CNN Model with no of CNN layers depending on the input size'''
-    super(TorchModel, self).__init__()
+    super(TorchModel3D, self).__init__()
     self.conv = torch.nn.Sequential()
     cnn_ch = 16
     if input_shape[1] == 1: # if num_channels = 1
@@ -94,10 +94,24 @@ class Model:
         self.input_shape = (sequence_size, channel, row_count, col_count)
         print("\n\nINPUT SHAPE = ", self.input_shape)
         print("\n\nOUTPUT DIM AKA # of Classes = ", self.output_dim)
+        # determine model structure based on the data
+        spacetime_dims = np.count_nonzero(np.array(self.input_shape)[[0, 2, 3]] != 1)
+        logger.info(f"Using Model of dimension {spacetime_dims}")
+
         # getting an object for the PyTorch Model class for Model Class
         # use CUDA if available
-        # TODO: ADD THE MODEL HERE
-        self.model = TorchModel(self.input_shape, self.output_dim)
+        # TODO: ADD THE MODEL HERE ACCORDING TO spacetime_dims
+        if spacetime_dims == 1:
+            self.model = TorchModel3D(self.input_shape, self.output_dim)
+        elif spacetime_dims == 2:
+            self.model = TorchModel3D(self.input_shape, self.output_dim)
+        elif spacetime_dims == 3:
+            self.model = TorchModel3D(self.input_shape, self.output_dim)
+        elif spacetime_dims == 0:
+            self.model = TorchModel3D(self.input_shape, self.output_dim)
+        else:
+            raise NotImplementedError
+
         print(self.model)
         self.model.to(self.device)
         

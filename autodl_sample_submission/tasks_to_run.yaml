@@ -1,8 +1,8 @@
 tasks: 
     - navierstokes # Space time dim = 3
     #- spherical # Space time dim = 2
-    #- ninapro # Space time dim = 2
-    #- fsd50k
+    #- ninapro # Space time dim = 1
+    #- fsd50k # can't read dataset due to segmentation fault
     #- cosmic # spacetime_dims = 2
     #- ecg # spacetime_dims = 1
     #- deepsea # spacetime_dims = 1
