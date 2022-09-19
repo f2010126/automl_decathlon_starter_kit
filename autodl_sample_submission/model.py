@@ -22,10 +22,7 @@ class TorchModel3D(nn.Module):
     super(TorchModel3D, self).__init__()
     self.conv = torch.nn.Sequential()
     cnn_ch = 16
-    if input_shape[1] == 1: # if num_channels = 1
-      self.conv.add_module('cnn1', nn.Conv3d(input_shape[0], cnn_ch, (1,3,3)))
-    else:
-      self.conv.add_module('cnn1', nn.Conv3d(input_shape[0], cnn_ch, 3))
+    self.conv.add_module('cnn1', nn.Conv3d(input_shape[0], cnn_ch, 3))
     self.conv.add_module('pool1', nn.MaxPool3d(2,2))
     i = 2
     while True:
