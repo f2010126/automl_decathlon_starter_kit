@@ -17,39 +17,31 @@ torch.manual_seed(1)
 
 # PyTorch Model class
 class TorchModel3D(nn.Module):
-  def __init__(self, input_shape, output_dim):
+  def __init__(self, input_shape, output_dim, channels=3):
     ''' 3D CNN Model with no of CNN layers depending on the input size'''
     super(TorchModel3D, self).__init__()
-    self.conv = torch.nn.Sequential()
-    cnn_ch = 16
-    self.conv.add_module('cnn1', nn.Conv3d(input_shape[0], cnn_ch, 3))
-    self.conv.add_module('pool1', nn.MaxPool3d(2,2))
-    i = 2
-    while True:
-      self.conv.add_module('cnn{}'.format(i),
-                           nn.Conv3d(cnn_ch * (i-1), cnn_ch * i, (1,3,3)))
-      self.conv.add_module('pool{}'.format(i), nn.MaxPool3d(2,2))
-      i += 1
-      n_size, out_len = self.get_fc_size(input_shape)
-      # no more CNN layers if Linear layers get input size < 1000
-      if  n_size < 1000 or out_len[3] < 3 or out_len[3] < 3:
-        break
-
+    self.conv1 = nn.Conv3d(
+        channels, 16, kernel_size=3, stride=1, padding=1, bias=False
+    )
     fc_size, _ = self.get_fc_size(input_shape)
     self.fc = nn.Linear(fc_size, output_dim)
 
   def forward_cnn(self, x):
-    x = self.conv(x)
+    x = self.conv1(x)
     return x
 
   def get_fc_size(self, input_shape):
     ''' function to get the size for Linear layers
     with given number of CNN layers
     '''
-    sample_input = Variable(torch.rand(1, *input_shape))
-    output_feat = self.forward_cnn(sample_input)
+
+    sample_input = Variable(torch.rand((20, 1, 64, 64)))
+    output_feat = self.forward_cnn(sample_input.unsqueeze(dim=1))
+    print(f'Output Feat: {output_feat.shape}')
     out_shape = output_feat.shape
+    print(f'Output Shape: {out_shape}')
     n_size = output_feat.data.view(1, -1).size(1)
+    print(f'n_size, out_shape {n_size}, {out_shape}')
     return n_size, out_shape
 
   def forward(self, x):
@@ -89,7 +81,7 @@ class Model:
         )
 
         self.input_shape = (sequence_size, channel, row_count, col_count)
-        print("\n\nINPUT SHAPE = ", self.input_shape)
+        print("\n\nINPUT SHAPE = sequence_size, channel, row_count, col_count ->", self.input_shape)
         print("\n\nOUTPUT DIM AKA # of Classes = ", self.output_dim)
         # determine model structure based on the data
         spacetime_dims = np.count_nonzero(np.array(self.input_shape)[[0, 2, 3]] != 1)
@@ -99,13 +91,13 @@ class Model:
         # use CUDA if available
         # TODO: ADD THE MODEL HERE ACCORDING TO spacetime_dims
         if spacetime_dims == 1:
-            self.model = TorchModel3D(self.input_shape, self.output_dim)
+            self.model = TorchModel3D(self.input_shape, self.output_dim,channel)
         elif spacetime_dims == 2:
-            self.model = TorchModel3D(self.input_shape, self.output_dim)
+            self.model = TorchModel3D(self.input_shape, self.output_dim,channel)
         elif spacetime_dims == 3:
-            self.model = TorchModel3D(self.input_shape, self.output_dim)
+            self.model = TorchModel3D(self.input_shape, self.output_dim,channel)
         elif spacetime_dims == 0:
-            self.model = TorchModel3D(self.input_shape, self.output_dim)
+            self.model = TorchModel3D(self.input_shape, self.output_dim,channel)
         else:
             raise NotImplementedError
 
