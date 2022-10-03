@@ -217,8 +217,7 @@ class Model:
         
         if model_config is None:
             # code is in ???? Data is in ???
-            parent = os.path.join(os.getcwd(), os.pardir)
-            datapath = os.path.join(parent, 'data/meta_dataset')
+            datapath = os.path.join(os.getcwd(), 'data/meta_dataset')
 
             # are the kakao brain configs also loaded here?
             if model_config_name is None:
