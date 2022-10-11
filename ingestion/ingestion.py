@@ -300,10 +300,15 @@ def ingestion_main(ingestion_success, args, dataset_name):
 
     logger.info("Creating model...")
     from model import Model  # in participants' model.py
+    try:
+        M = Model(
+            train_metadata
+        )  # The metadata of D_train and D_test only differ in sample_count
 
-    M = Model(
-        train_metadata
-    )  # The metadata of D_train and D_test only differ in sample_count
+    except Exception as e:
+        logger.info(f" WE HAVE A CREATION PROBLEM-------->{e}")
+    else:
+        logger.info(f"ALll Good")
 
     # Mark starting time of ingestion
     start = time.time()
@@ -338,18 +343,30 @@ def ingestion_main(ingestion_success, args, dataset_name):
 
     # Train the model
     logger.info("Begin training the model...")
-    M.train(
-        D_train,
-        D_val,
-        val_metadata,
-        remaining_time_budget=remaining_time_budget,
-    )
+    try:
+        M.train(
+            D_train,
+            D_val,
+            val_metadata,
+            remaining_time_budget=remaining_time_budget,
+        )
+    except Exception as e:
+        logger.info(f" WE HAVE A TRAIN PROBLEM-------->{e}")
+    else:
+        logger.info(f"ALll Good")
+
     logger.info("Finished training the model.")
     remaining_time_budget = start + time_budget - time.time()
 
     # Make predictions using the trained model
     logger.info("Begin testing the model by making predictions " + "on test set...")
-    Y_pred = M.test(D_test, remaining_time_budget=remaining_time_budget)
+    try:
+        Y_pred = M.test(D_test, remaining_time_budget=remaining_time_budget)
+    except Exception as e:
+        logger.info(f" WE HAVE A TEST PROBLEM-------->{e}")
+    else:
+        logger.info(f"ALll Good")
+
     logger.info("Finished making predictions.")
 
     # Check if the prediction has good shape

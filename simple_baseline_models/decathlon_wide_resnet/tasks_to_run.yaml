@@ -1,6 +1,6 @@
 tasks: 
-    #- navierstokes
-    - spherical
+    - navierstokes
+    #- spherical
     #- ninapro
     #- fsd50k
     #- cosmic
